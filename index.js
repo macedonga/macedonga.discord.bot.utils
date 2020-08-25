@@ -30,7 +30,7 @@ client.on('message', message => {
                 }, 500);
             }
         } else {
-            return message.channel.send(createWarning('You cannot kick!'));
+            message.channel.send(createWarning("You need to have the `KICK_MEMBERS` permission!"));
         }
     } else if (command === 'ban') {
         if (message.member.hasPermission("BAN_MEMBERS")) {
@@ -53,7 +53,7 @@ client.on('message', message => {
                 }, 500);
             }
         } else {
-            return message.channel.send(createWarning('You cannot ban!'));
+            message.channel.send(createWarning("You need to have the `BAN_MEMBERS` permission!"));
         }
     } else if (command === 'meme') {
         https.get('https://api1-funtext.herokuapp.com/rndmemes', (resp) => {
@@ -136,6 +136,21 @@ client.on('message', message => {
         });
         req.write(data);
         req.end();
+    } else if (command === 'purge') {
+        if (message.member.hasPermission("MANAGE_MESSAGES")) {
+            const amount = parseInt(args[0]) + 1;
+            if (isNaN(amount)) {
+                message.channel.send(createError('That doesn\'t seem to be a valid number!'));
+            } else if (amount <= 1 || amount > 100) {
+                message.channel.send(createError('You need to input a number between 1 and 99!'));
+            } else {
+                message.channel.bulkDelete(amount, true).catch(err => {
+                    message.channel.send(createError("Error:\n" + err));
+                });
+            }
+        } else {
+            message.channel.send(createWarning("You need to have the `MANAGE_MESSAGES` permission!"));
+        }
     }
 });
 
