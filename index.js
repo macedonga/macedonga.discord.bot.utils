@@ -4,8 +4,9 @@ require('dotenv').config()
 
 const client = new Discord.Client();
 
-client.once('ready', () => {
-    console.log('Ready!');
+client.on('ready', () => {
+    client.user.setPresence({ activity: { name: 'mb.help' }, status: 'online' });
+    console.log("Ready!");
 });
 
 client.on('message', message => {
