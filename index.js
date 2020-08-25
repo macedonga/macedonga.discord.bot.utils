@@ -66,7 +66,8 @@ client.on('message', message => {
                 const embed = new Discord.MessageEmbed()
                     .setTitle(res.title)
                     .setURL(res.postLink)
-                    .setImage(res.url);
+                    .setImage(res.url)
+                    .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
 
                 message.channel.send(embed);
             });
@@ -151,6 +152,15 @@ client.on('message', message => {
         } else {
             message.channel.send(createWarning("You need to have the `MANAGE_MESSAGES` permission!"));
         }
+    } else if (command === 'help') {
+        const embed = new Discord.MessageEmbed()
+            .setColor('#0000ff')
+            .setTitle("Help")
+            .setDescription("*The arguments inside `<>` are not required.*")
+            .addFields({ name: '**`mb.ban @user <DAYS>`**', value: 'Bans a member.\n`<DAYS>`: Must be a value from 1 to 7. Default is 7.\n*You need the `BAN_MEMBERS` permission.*' }, { name: '**`mb.kick @user`**', value: 'Kick a member.\n*You need the `KICK_MEMBERS` permission.*' }, { name: '**`mb.purge 1-99`**', value: 'Purges messages in the channel.\n*You need the `MANAGE_MESSAGES` permission.*' }, { name: '**`mb.meme`**', value: 'Returns a meme from `r/memes`, `r/dankmemes` or `r/meirl`' }, { name: '**`mb.insult @user`**', value: 'Insults the specified user.' }, { name: '**`mb.shorten https://link.com <SLUG>`**', value: 'Shortens the given URL.\n`<SLUG>`: the id of the shortened URL.' })
+            .setTimestamp()
+            .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
+        message.channel.send(embed);
     }
 });
 
@@ -160,6 +170,7 @@ function createError(error) {
         .setTitle('Error!')
         .setDescription(error)
         .setTimestamp()
+        .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
     return embed;
 }
 
@@ -169,6 +180,7 @@ function createWarning(warning) {
         .setTitle('Warning!')
         .setDescription(warning)
         .setTimestamp()
+        .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
     return embed;
 }
 
@@ -178,6 +190,7 @@ function createSuccess(title, success) {
         .setTitle(title)
         .setDescription(success)
         .setTimestamp()
+        .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
     return embed;
 }
 
