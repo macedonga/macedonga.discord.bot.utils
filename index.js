@@ -182,8 +182,27 @@ function createSuccess(title, success) {
 }
 
 client.on('guildMemberRemove', member => {
-    if (member.guild.id === 736591510413508619) {
+    // Checks for the server "Thunder Advertising Official". https://discord.gg/KUX5VXp
+    if (member.guild.id === "736591510413508619") {
+        const categoryChannels = member.guild.channels.cache.filter(channel => channel.type === "category");
+        categoryChannels.forEach(channel => {
+            if (channel.id === "737979266788229200") {
+                const advertisingChannels = channel.children;
+                advertisingChannels.forEach(ch => {
+                    ch.messages.fetch().then(messages => {
+                        let arr = messages.array();
 
+                        arr.forEach(message => {
+                            if (message.author.id === member.user.id)
+                                message.delete();
+                        });
+                    });
+                });
+            }
+        });
+
+        const channel = member.guild.channels.cache.get('737317539213869125');
+        return channel.send(createSuccess("Deleted `" + member.user.username + "` messages successfully!", ""));
     }
 });
 
