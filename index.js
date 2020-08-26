@@ -279,33 +279,38 @@ client.on('message', message => {
         }
         message.delete();
         if (!args[0])
-            return message.channel.send(createWarning("No link given"));
+            return message.channel.send(createWarning("No YouTube link given!"));
 
         if (!checkYT(args[0]))
-            return message.channel.send(createWarning("Not a valid YouTube link"));
+            return message.channel.send(createWarning("Not a valid YouTube link!"));
 
         if (!message.member.voice.channel)
-            return message.channel.send(createWarning("Not on voice channel"));
+            return message.channel.send(createWarning("You are not on voice channel!"));
 
-        if (!servers[message.guild.id]) servers[message.guild.id] = {
-            queue: []
-        };
+        if (!servers[message.guild.id]) {
+            servers[message.guild.id] = {
+                queue: []
+            };
 
-        var server = servers[message.guild.id];
-
-        server.queue.push(args[0]);
-
-        if (!message.guild.voice) message.member.voice.channel.join().then(function(connection) {
-            play(connection, message);
-        });
-        else
+            var server = servers[message.guild.id];
+            server.queue.push(args[0]);
+            message.member.voice.channel.join().then(function(connection) {
+                play(connection, message);
+            });
+        } else {
+            var server = servers[message.guild.id];
+            server.queue.push(args[0]);
             return message.channel.send(createSuccess("Added video to queue", ""));
-
+        }
     } else if (command === 'm.skip') {
         message.delete();
-        var server = servers[message.guild.id];
-        if (server.dispatcher)
-            server.dispatcher.end();
+        if (servers[message.guild.id]) {
+            var server = servers[message.guild.id];
+            if (server.dispatcher)
+                server.dispatcher.end();
+        } else {
+
+        }
     } else if (command === 'm.stop') {
         message.delete();
         servers[message.guild.id] = undefined;
