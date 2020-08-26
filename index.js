@@ -305,7 +305,7 @@ client.on('guildMemberRemove', member => {
             }
         });
 
-        const channel = member.guild.channels.cache.get('737317539213869125');
+        const channel = member.guild.channels.cache.get('738665053544251412');
         return channel.send(createSuccess("Deleted `" + member.user.username + "` messages successfully!", ""));
     }
 });
