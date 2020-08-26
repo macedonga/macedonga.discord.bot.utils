@@ -1,8 +1,11 @@
 const Discord = require('discord.js');
 const https = require('https');
+const ytdl = require('ytdl-core');
+const getYoutubeTitle = require('get-youtube-title')
 require('dotenv').config()
 
 const client = new Discord.Client();
+var servers = {};
 
 client.on('ready', () => {
     client.user.setPresence({ activity: { name: 'mb.help' }, status: 'online' });
@@ -183,6 +186,9 @@ client.on('message', message => {
             .addField('**`mb.insult @user`**', 'Insults the specified user.')
             .addField('**`mb.shorten https://link.com <SLUG>`**', 'Shortens the given URL.\n`<SLUG>`: the id of the shortened URL.')
             .addField('**`mb.whois https://link.com <dbg.true>`**', 'Returns WHOIS info about the domain.\n`<dbg.true>`: returns the json response from the API. Debugging purposes only!')
+            .addField('**`mb.m.play <YT-LINK>`**', 'Plays the audio from the given YouTube video or adds the video to the queue.', true)
+            .addField('**`mb.m.skip`**', 'Skips to the next video on the queue.', true)
+            .addField('**`mb.m.stop`**', 'Disconnects the bot from the VC.', true)
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
@@ -252,6 +258,62 @@ client.on('message', message => {
             });
             message.channel.send(say);
         }
+    } else if (command === 'm.play') {
+        function play(connection, message) {
+            var server = servers[message.guild.id];
+            getYoutubeTitle(getYTID(server.queue[0]), function(err, title) {
+                message.channel.send(createSuccess("Now playing " + title, ""));
+            });
+            server.dispatcher = connection.play(ytdl(server.queue[0], { filter: "audioonly" }));
+            server.queue.shift();
+            server.dispatcher.on("finish", function() {
+                if (server.queue[0]) {
+                    play(connection, message);
+                } else {
+                    connection.disconnect();
+                    return message.channel.send(createWarning("No link in queue.\nDisconnecting."));
+                }
+            });
+        }
+        message.delete();
+        if (!args[0])
+            return message.channel.send(createWarning("No link given"));
+
+        if (!checkYT(args[0]))
+            return message.channel.send(createWarning("Not a valid YouTube link"));
+
+        if (!message.member.voice.channel)
+            return message.channel.send(createWarning("Not on voice channel"));
+
+        if (!servers[message.guild.id]) servers[message.guild.id] = {
+            queue: []
+        };
+
+        var server = servers[message.guild.id];
+
+        server.queue.push(args[0]);
+
+        if (!message.guild.voice) message.member.voice.channel.join().then(function(connection) {
+            play(connection, message);
+        });
+        else
+            return message.channel.send(createSuccess("Added video to queue", ""));
+
+    } else if (command === 'm.skip') {
+        message.delete();
+        var server = servers[message.guild.id];
+        if (server.dispatcher)
+            server.dispatcher.end();
+    } else if (command === 'm.stop') {
+        message.delete();
+        var server = servers[message.guild.id];
+        if (message.guild.voice.connection) {
+            for (var i = server.queue.length - 1; i >= 0; i--)
+                server.queue.splice(i, 1);
+            server.dispatcher.end();
+        }
+        message.guild.voice.connection.disconnect();
+        return message.channel.send(createSuccess("Disconnected from voice channel", ""));
     }
 });
 
@@ -283,6 +345,16 @@ function createSuccess(title, success) {
         .setTimestamp()
         .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
     return embed;
+}
+
+function checkYT(link) {
+    if (link.includes("youtube.com/watch?v=") || link.includes("www.youtube.com/watch?v="))
+        return true;
+    return false;
+}
+
+function getYTID(link) {
+    return link.split('v=')[1];
 }
 
 client.on('guildMemberRemove', member => {
