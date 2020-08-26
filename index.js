@@ -261,18 +261,20 @@ client.on('message', message => {
     } else if (command === 'm.play') {
         function play(connection, message) {
             var server = servers[message.guild.id];
+            if (!server) {
+                connection.disconnect();
+                return message.channel.send(createWarning("No link in queue.\nDisconnecting."));
+            }
             getYoutubeTitle(getYTID(server.queue[0]), function(err, title) {
                 message.channel.send(createSuccess("Now playing " + title, ""));
             });
             server.dispatcher = connection.play(ytdl(server.queue[0], { filter: "audioonly" }));
             server.queue.shift();
             server.dispatcher.on("finish", function() {
-                if (server.queue[0]) {
+                if (server.queue[0])
                     play(connection, message);
-                } else {
+                else
                     connection.disconnect();
-                    return message.channel.send(createWarning("No link in queue.\nDisconnecting."));
-                }
             });
         }
         message.delete();
@@ -306,12 +308,7 @@ client.on('message', message => {
             server.dispatcher.end();
     } else if (command === 'm.stop') {
         message.delete();
-        var server = servers[message.guild.id];
-        if (message.guild.voice.connection) {
-            for (var i = server.queue.length - 1; i >= 0; i--)
-                server.queue.splice(i, 1);
-            server.dispatcher.end();
-        }
+        servers[message.guild.id] = undefined;
         message.guild.voice.connection.disconnect();
         return message.channel.send(createSuccess("Disconnected from voice channel", ""));
     }
