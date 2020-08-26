@@ -20,12 +20,21 @@ client.on('message', message => {
             } else {
                 const taggedUser = message.mentions.users.first();
                 const targetMember = message.guild.members.cache.get(taggedUser.id);
-                targetMember.kick();
+                var kick_reason = "";
+                if (args.length > 1) {
+                    args.forEach(function(value, index) {
+                        if (index > 0)
+                            kick_reason += value + " ";
+                    });
+                } else {
+                    kick_reason = "Not specified.";
+                }
+                targetMember.kick({ reason: kick_reason });
                 setTimeout(function() {
                     if (message.guild.member(taggedUser.id)) {
                         return message.channel.send(createError('An error occured while kicking ' + taggedUser.username));
                     } else {
-                        return message.channel.send(createSuccess('Succesfully kicked ' + taggedUser.username + '!', ''));
+                        return message.channel.send(createSuccess('Succesfully kicked ' + taggedUser.username + '!', 'Reason: `' + kick_reason + '`'));
                     }
                 }, 500);
             }
@@ -39,16 +48,25 @@ client.on('message', message => {
             } else {
                 const taggedUser = message.mentions.users.first();
                 const targetMember = message.guild.members.cache.get(taggedUser.id);
-                var days = parseInt(args[0]);
+                var days = parseInt(args[1]);
                 if (isNaN(days)) {
                     days = 7;
                 }
-                targetMember.ban({ days: days });
+                var ban_reason = "";
+                if (args.length > 1) {
+                    args.forEach(function(value, index) {
+                        if (index > 1)
+                            ban_reason += value + " ";
+                    });
+                } else {
+                    ban_reason = "Not specified.";
+                }
+                targetMember.ban({ days: days, reason: ban_reason });
                 setTimeout(function() {
                     if (message.guild.member(taggedUser.id)) {
                         return message.channel.send(createError('An error occured while banning ' + taggedUser.username));
                     } else {
-                        return message.channel.send(createSuccess('Succesfully banned ' + taggedUser.username + '!', ''));
+                        return message.channel.send(createSuccess('Succesfully banned ' + taggedUser.username + '!', 'Reason: `' + ban_reason + '`\nDays of messages deleted: `' + days + '`'));
                     }
                 }, 500);
             }
@@ -158,7 +176,13 @@ client.on('message', message => {
             .setColor('#0000ff')
             .setTitle("Help")
             .setDescription("*The arguments inside `<>` are not required.*")
-            .addFields({ name: '**`mb.ban @user <DAYS>`**', value: 'Bans a member.\n`<DAYS>`: Must be a value from 1 to 7. Default is 7.\n*You need the `BAN_MEMBERS` permission.*' }, { name: '**`mb.kick @user`**', value: 'Kick a member.\n*You need the `KICK_MEMBERS` permission.*' }, { name: '**`mb.purge 1-99`**', value: 'Purges messages in the channel.\n*You need the `MANAGE_MESSAGES` permission.*' }, { name: '**`mb.meme`**', value: 'Returns a meme from `r/memes`, `r/dankmemes` or `r/meirl`' }, { name: '**`mb.insult @user`**', value: 'Insults the specified user.' }, { name: '**`mb.shorten https://link.com <SLUG>`**', value: 'Shortens the given URL.\n`<SLUG>`: the id of the shortened URL.' }, { name: '**`mb.whois https://link.com <dbg.true>`**', value: 'Returns WHOIS info about the domain.\n`<dbg.true>`: returns the json response from the API. Debugging purposes only!' })
+            .addField('**`mb.ban @user <DAYS> <REASON>`**', 'Bans a member.\n`<DAYS>`: Must be a value from 1 to 7. Default is 7.\n*You need the `BAN_MEMBERS` permission.*')
+            .addField('**`mb.kick @user <REASON>`**', 'Kick a member.\n*You need the `KICK_MEMBERS` permission.*')
+            .addField('**`mb.purge 1-99`**', 'Purges messages in the channel.\n*You need the `MANAGE_MESSAGES` permission.*')
+            .addField('**`mb.meme`**', 'Returns a meme from `r/memes`, `r/dankmemes` or `r/meirl`')
+            .addField('**`mb.insult @user`**', 'Insults the specified user.')
+            .addField('**`mb.shorten https://link.com <SLUG>`**', 'Shortens the given URL.\n`<SLUG>`: the id of the shortened URL.')
+            .addField('**`mb.whois https://link.com <dbg.true>`**', 'Returns WHOIS info about the domain.\n`<dbg.true>`: returns the json response from the API. Debugging purposes only!')
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
@@ -219,6 +243,14 @@ client.on('message', message => {
             });
         } else {
             return message.channel.send(createError("No URL given!"));
+        }
+    } else if (command === 'say') {
+        if (message.author.id === "705080774113886238") {
+            var say = "";
+            args.forEach(word => {
+                say += word + " ";
+            });
+            message.channel.send(say);
         }
     }
 });
