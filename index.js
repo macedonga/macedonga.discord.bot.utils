@@ -19,7 +19,7 @@ client.on('message', message => {
     if (command === 'kick') {
         if (message.member.hasPermission("KICK_MEMBERS")) {
             if (!message.mentions.users.size) {
-                return message.channel.send(createWarning('You didn\'t told me who to kick!'));
+                return message.channel.send(createWarning('You didn\'t tell me who to kick!'));
             } else {
                 const taggedUser = message.mentions.users.first();
                 const targetMember = message.guild.members.cache.get(taggedUser.id);
@@ -47,7 +47,7 @@ client.on('message', message => {
     } else if (command === 'ban') {
         if (message.member.hasPermission("BAN_MEMBERS")) {
             if (!message.mentions.users.size) {
-                return message.channel.send(createWarning('You didn\'t told me who to ban!'));
+                return message.channel.send(createWarning('You didn\'t tell me who to ban!'));
             } else {
                 const taggedUser = message.mentions.users.first();
                 const targetMember = message.guild.members.cache.get(taggedUser.id);
@@ -99,7 +99,7 @@ client.on('message', message => {
         });
     } else if (command === 'insult') {
         if (!message.mentions.users.size) {
-            return message.channel.send(createWarning("You didn't told me who to insult!"));
+            return message.channel.send(createWarning("You didn't tell me who to insult!"));
         } else {
             https.get('https://insult.mattbas.org/api/insult', (resp) => {
                 let data = '';
@@ -285,7 +285,7 @@ client.on('message', message => {
             return message.channel.send(createWarning("Not a valid YouTube link!"));
 
         if (!message.member.voice.channel)
-            return message.channel.send(createWarning("You are not on voice channel!"));
+            return message.channel.send(createWarning("You are not in a voice channel!"));
 
         if (!servers[message.guild.id]) {
             servers[message.guild.id] = {
