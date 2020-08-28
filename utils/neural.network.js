@@ -35,8 +35,6 @@ function init() {
 function isQuestion(data) {
     const encoded = encode(data);
     num = network.run(encoded);
-    console.log(num);
-
     if (num.question > 0.7)
         return true;
     return false;
