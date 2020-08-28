@@ -3,6 +3,8 @@ const https = require('https');
 const ytdl = require('ytdl-core');
 const getYoutubeTitle = require('get-youtube-title')
 require('dotenv').config()
+const { createError, createWarning, createSuccess, checkYT, getYTID } = require('./utils/functions');
+const neuralnetwork = require('./utils/neural.network');
 
 const client = new Discord.Client();
 var servers = {};
@@ -13,7 +15,7 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-    if (!message.content.startsWith(process.env.PREFIX) || message.author.bot) return;
+    if (message.author.bot) return;
     const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
     if (command === 'kick') {
@@ -180,7 +182,7 @@ client.on('message', message => {
             .setTitle("Help")
             .setDescription("*The arguments inside `<>` are not required.*")
             .addField('**`mb.ban @user <DAYS> <REASON>`**', 'Bans a member.\n`<DAYS>`: Must be a value from 1 to 7. Default is 7.\n*You need the `BAN_MEMBERS` permission.*')
-            .addField('**`mb.kick @user <REASON>`**', 'Kick a member.\n*You need the `KICK_MEMBERS` permission.*')
+            .addField('**`mb.kick @user <REASON>`**', 'Kicks a member.\n*You need the `KICK_MEMBERS` permission.*')
             .addField('**`mb.purge 1-99`**', 'Purges messages in the channel.\n*You need the `MANAGE_MESSAGES` permission.*')
             .addField('**`mb.meme`**', 'Returns a meme from `r/memes`, `r/dankmemes` or `r/meirl`')
             .addField('**`mb.insult @user`**', 'Insults the specified user.')
@@ -316,48 +318,13 @@ client.on('message', message => {
         servers[message.guild.id] = undefined;
         message.guild.voice.connection.disconnect();
         return message.channel.send(createSuccess("Disconnected from voice channel", ""));
+    } else if (neuralnetwork.isQuestion(message.content)) {
+        const lmgtfy = new URL("https://lmgtfy.com/");
+        lmgtfy.searchParams.append("q", message.content);
+        lmgtfy.searchParams.append("s", "d");
+        message.channel.send(lmgtfy.href);
     }
 });
-
-function createError(error) {
-    const embed = new Discord.MessageEmbed()
-        .setColor('#ff0000')
-        .setTitle('Error!')
-        .setDescription(error)
-        .setTimestamp()
-        .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
-    return embed;
-}
-
-function createWarning(warning) {
-    const embed = new Discord.MessageEmbed()
-        .setColor('#ffff00')
-        .setTitle('Warning!')
-        .setDescription(warning)
-        .setTimestamp()
-        .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
-    return embed;
-}
-
-function createSuccess(title, success) {
-    const embed = new Discord.MessageEmbed()
-        .setColor('#00ff00')
-        .setTitle(title)
-        .setDescription(success)
-        .setTimestamp()
-        .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
-    return embed;
-}
-
-function checkYT(link) {
-    if (link.includes("youtube.com/watch?v=") || link.includes("www.youtube.com/watch?v="))
-        return true;
-    return false;
-}
-
-function getYTID(link) {
-    return link.split('v=')[1];
-}
 
 client.on('guildMemberRemove', member => {
     // Checks for the server "Thunder Advertising Official". https://discord.gg/KUX5VXp
@@ -384,4 +351,5 @@ client.on('guildMemberRemove', member => {
     }
 });
 
+neuralnetwork.init();
 client.login(process.env.TOKEN);
