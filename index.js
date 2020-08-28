@@ -346,13 +346,12 @@ client.on('message', message => {
             mes.react("👎");
             message.delete();
         });
-    }
-    /*else if (neuralnetwork.isQuestion(message.content)) {
+    } else if (neuralnetwork.isQuestion(message.content)) {
         const lmgtfy = new URL("https://lmgtfy.com/");
         lmgtfy.searchParams.append("q", message.content);
         lmgtfy.searchParams.append("s", "d");
         message.channel.send(lmgtfy.href);
-    }*/
+    }
 });
 
 client.on('guildMemberRemove', member => {
@@ -446,5 +445,5 @@ function randomRange(min, max) { // returns an int >= min and <= max
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-//neuralnetwork.init();
+neuralnetwork.init();
 client.login(process.env.TOKEN);
