@@ -339,7 +339,7 @@ client.on('message', message => {
             .setDescription(poll)
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
-        if (ping && message.sender.hasPermission("MENTION_EVERYONE"))
+        if (ping && message.member.hasPermission("MENTION_EVERYONE"))
             message.channel.send("@" + ping).then(mes => mes.delete());
         message.channel.send(embed).then(mes => {
             mes.react("👍");
