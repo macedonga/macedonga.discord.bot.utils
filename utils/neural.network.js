@@ -34,12 +34,11 @@ function init() {
 
 function isQuestion(data) {
     const encoded = encode(data);
-    if (encoded.length < 15) {
-        num = network.run(encoded);
-        if (num.question > 0.7)
-            return true;
-        return false;
-    }
+    num = network.run(encoded);
+    console.log(num);
+
+    if (num.question > 0.7)
+        return true;
     return false;
 }
 
