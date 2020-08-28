@@ -26,11 +26,8 @@ client.on('message', message => {
                 const taggedUser = message.mentions.users.first();
                 const targetMember = message.guild.members.cache.get(taggedUser.id);
                 var kick_reason = "";
-                if (args.length > 1) {
-                    args.forEach(function(value, index) {
-                        if (index > 0)
-                            kick_reason += value + " ";
-                    });
+                if (args[2]) {
+                    kick_reason = args.splice(3).join(" ");
                 } else {
                     kick_reason = "Not specified.";
                 }
@@ -58,11 +55,8 @@ client.on('message', message => {
                     days = 7;
                 }
                 var ban_reason = "";
-                if (args.length > 1) {
-                    args.forEach(function(value, index) {
-                        if (index > 1)
-                            ban_reason += value + " ";
-                    });
+                if (args[2]) {
+                    ban_reason = args.splice(3).join(" ");
                 } else {
                     ban_reason = "Not specified.";
                 }
@@ -188,6 +182,7 @@ client.on('message', message => {
             .addField('**`mb.insult @user`**', 'Insults the specified user.')
             .addField('**`mb.shorten https://link.com <SLUG>`**', 'Shortens the given URL.\n`<SLUG>`: the id of the shortened URL.')
             .addField('**`mb.whois https://link.com <dbg.true>`**', 'Returns WHOIS info about the domain.\n`<dbg.true>`: returns the json response from the API. Debugging purposes only!')
+            .addField('**`mb.poll <everyone> <here> POLL`**', 'Creates a poll and pings **here** or **everyone** if specified.\n*You need the `MENTION_EVERYONE` permission to be able to ping **here** or **everyone**.*')
             .addField('**`mb.m.play <YT-LINK>`**', 'Plays the audio from the given YouTube video or adds the video to the queue.', true)
             .addField('**`mb.m.skip`**', 'Skips to the next video on the queue.', true)
             .addField('**`mb.m.stop`**', 'Disconnects the bot from the VC.', true)
@@ -328,6 +323,29 @@ client.on('message', message => {
             servers[message.guild.id] = undefined;
             return message.channel.send(createSuccess("Disconnected from voice channel", ""));
         }
+    } else if (command === 'poll') {
+        if (!args) {
+            return;
+        }
+        var ping = "";
+        if (args[0] === "everyone" || args[0] === "here") {
+            var poll = args.splice(1).join(" ");
+            ping = args[0];
+        } else
+            var poll = args.join(" ");
+        const embed = new Discord.MessageEmbed()
+            .setColor('#00ff00')
+            .setTitle("📓 - Poll!")
+            .setDescription(poll)
+            .setTimestamp()
+            .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
+        if (ping && message.sender.hasPermission("MENTION_EVERYONE"))
+            message.channel.send("@" + ping).then(mes => mes.delete());
+        message.channel.send(embed).then(mes => {
+            mes.react("👍");
+            mes.react("👎");
+            message.delete();
+        });
     } else if (neuralnetwork.isQuestion(message.content)) {
         const lmgtfy = new URL("https://lmgtfy.com/");
         lmgtfy.searchParams.append("q", message.content);
