@@ -308,16 +308,26 @@ client.on('message', message => {
         message.delete();
         if (servers[message.guild.id]) {
             var server = servers[message.guild.id];
+            if (server.dispatcher && message.member.voice.channel)
+                server.dispatcher.end();
+        } else if (message.member.voice.channel) {
+            var server = servers[message.guild.id];
             if (server.dispatcher)
                 server.dispatcher.end();
-        } else {
-
+            message.guild.voice.connection.disconnect();
+            servers[message.guild.id] = undefined;
+            return message.channel.send(createSuccess("Disconnected from voice channel", ""));
         }
     } else if (command === 'm.stop') {
         message.delete();
-        servers[message.guild.id] = undefined;
-        message.guild.voice.connection.disconnect();
-        return message.channel.send(createSuccess("Disconnected from voice channel", ""));
+        if (message.member.voice.channel && servers[message.guild.id]) {
+            var server = servers[message.guild.id];
+            if (server.dispatcher)
+                server.dispatcher.end();
+            message.guild.voice.connection.disconnect();
+            servers[message.guild.id] = undefined;
+            return message.channel.send(createSuccess("Disconnected from voice channel", ""));
+        }
     } else if (neuralnetwork.isQuestion(message.content)) {
         const lmgtfy = new URL("https://lmgtfy.com/");
         lmgtfy.searchParams.append("q", message.content);
