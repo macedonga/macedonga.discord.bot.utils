@@ -441,6 +441,33 @@ client.on('guildMemberAdd', member => {
     }
 });
 
+client.on('guildCreate', guild => {
+    var postData = JSON.stringify({ 'id': guild.id });
+
+    var options = {
+        hostname: 'api.macedon.ga',
+        path: '/mdbu/server/add',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': postData.length
+        }
+    };
+
+    var req = https.request(options, (res) => {
+        res.on('data', (d) => {
+            process.stdout.write(d);
+        });
+    });
+
+    req.on('error', (e) => {
+        console.error(e);
+    });
+
+    req.write(postData);
+    req.end();
+});
+
 function randomRange(min, max) { // returns an int >= min and <= max
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }

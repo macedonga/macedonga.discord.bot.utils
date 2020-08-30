@@ -4,6 +4,7 @@ const TrainingSet = require('../data/training-data.json');
 var network = "";
 
 function buildWordDictionary(trainingData) {
+    console.log("Building Word Dictionary");
     const tokenisedArray = trainingData.map(item => {
         const tokens = item.phrase.split(' ');
         return tokens.map(token => natural.PorterStemmer.stem(token));
@@ -16,6 +17,7 @@ function buildWordDictionary(trainingData) {
 const dictionary = buildWordDictionary(TrainingSet);
 
 function encode(phrase) {
+    console.log("Encoding " + phrase);
     const phraseTokens = phrase.split(' ');
     const encodedPhrase = dictionary.map(word => phraseTokens.includes(word) ? 1 : 0);
 
@@ -23,12 +25,15 @@ function encode(phrase) {
 }
 
 const encodedTrainingSet = TrainingSet.map(dataSet => {
+    console.log("Creating encoded training set");
     const encodedValue = encode(dataSet.phrase);
     return { input: encodedValue, output: dataSet.result };
 })
 
 function init() {
+    console.log("Starting initiation of Neural Network");
     network = new BrainJs.NeuralNetwork();
+    console.log("Starting training");
     network.train(encodedTrainingSet);
 }
 
