@@ -17,7 +17,6 @@ function buildWordDictionary(trainingData) {
 const dictionary = buildWordDictionary(TrainingSet);
 
 function encode(phrase) {
-    console.log("Encoding " + phrase);
     const phraseTokens = phrase.split(' ');
     const encodedPhrase = dictionary.map(word => phraseTokens.includes(word) ? 1 : 0);
 

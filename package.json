@@ -17,6 +17,7 @@
         "get-youtube-title": "^1.0.1",
         "natural": "^2.1.5",
         "opusscript": "0.0.7",
+        "request": "^2.88.2",
         "ytdl-core": "^3.2.2"
     },
     "devDependencies": {

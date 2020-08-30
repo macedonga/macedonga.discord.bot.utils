@@ -5,12 +5,21 @@ const getYoutubeTitle = require('get-youtube-title')
 require('dotenv').config()
 const { createError, createWarning, createSuccess, checkYT, getYTID } = require('./utils/functions');
 const neuralnetwork = require('./utils/neural.network');
+var request = require('request');
 
 const client = new Discord.Client();
 var servers = {};
 
 client.on('ready', () => {
     client.user.setPresence({ activity: { name: 'mb.help' }, status: 'online' });
+    client.guilds.cache.forEach(guild => {
+        request.post('https://api.macedon.ga/mdbu/server/check', { json: { sid: guild.id } }, function(error, response, body) {
+            if (!error && response.statusCode == 200) {
+                if (!body.connected)
+                    request.post('https://api.macedon.ga/mdbu/server/add', { json: { sid: guild.id, key: process.env.KEY } });
+            }
+        });
+    });
     console.log("Ready!");
 });
 
@@ -442,30 +451,12 @@ client.on('guildMemberAdd', member => {
 });
 
 client.on('guildCreate', guild => {
-    var postData = JSON.stringify({ 'id': guild.id });
-
-    var options = {
-        hostname: 'api.macedon.ga',
-        path: '/mdbu/server/add',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': postData.length
+    request.post('https://api.macedon.ga/mdbu/server/check', { json: { sid: guild.id } }, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            if (!body.connected)
+                request.post('https://api.macedon.ga/mdbu/server/add', { json: { sid: guild.id, key: process.env.KEY } });
         }
-    };
-
-    var req = https.request(options, (res) => {
-        res.on('data', (d) => {
-            process.stdout.write(d);
-        });
     });
-
-    req.on('error', (e) => {
-        console.error(e);
-    });
-
-    req.write(postData);
-    req.end();
 });
 
 function randomRange(min, max) { // returns an int >= min and <= max
