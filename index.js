@@ -490,5 +490,16 @@ socket.on('settings update', function(data) {
     });
 });
 
+socket.on('get channels', function(data) {
+    var guild = client.guilds.cache.get(data);
+    var ch = {};
+    guild.channels.cache.forEach(channel => {
+        ch[channel.id] = {
+            name: channel.name
+        }
+    });
+    socket.emit('return channels', ch);
+});
+
 neuralnetwork.init();
 client.login(process.env.TOKEN);
