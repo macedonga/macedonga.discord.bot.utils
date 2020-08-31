@@ -15,16 +15,20 @@ var settings = {};
 client.on('ready', () => {
     client.user.setPresence({ activity: { name: 'mb.help' }, status: 'online' });
     client.guilds.cache.forEach(guild => {
+        var jData = { sid: guild.id, uid: guild.owner.user.id, key: process.env.KEY }
+
         request.post('https://api.macedon.ga/mdbu/server/check', { json: { sid: guild.id } }, function(error, response, body) {
             if (!error && response.statusCode == 200)
                 if (!body.connected)
-                    request.post('https://api.macedon.ga/mdbu/server/add', { json: { sid: guild.id, key: process.env.KEY } });
-        });
-        request.post('https://api.macedon.ga/mdbu/settings/get', { json: { sid: guild.id } }, function(error, response, body) {
-            if (body[0].sid) {
-                settings[guild.id] = [];
-                settings[guild.id].push(body[0]);
-            }
+                    request.post('https://api.macedon.ga/mdbu/server/add', { json: jData }, function(error, response, body) {});
+                else {
+                    request.post('https://api.macedon.ga/mdbu/settings/get', { json: { sid: guild.id } }, function(error, response, body) {
+                        if (body[0].sid) {
+                            settings[guild.id] = [];
+                            settings[guild.id].push(body[0]);
+                        }
+                    });
+                }
         });
     });
     console.log("Ready!");
@@ -462,7 +466,7 @@ client.on('guildCreate', guild => {
     request.post('https://api.macedon.ga/mdbu/server/check', { json: { sid: guild.id } }, function(error, response, body) {
         if (!error && response.statusCode == 200) {
             if (!body.connected)
-                request.post('https://api.macedon.ga/mdbu/server/add', { json: { sid: guild.id, key: process.env.KEY } });
+                request.post('https://api.macedon.ga/mdbu/server/add', { json: { sid: guild.id, uid: guild.owner.user.id, key: process.env.KEY } });
         }
     });
 });
@@ -487,6 +491,7 @@ socket.on('settings update', function(data) {
             settings[data] = [];
             settings[data].push(body[0]);
         }
+        console.log(body);
     });
 });
 
