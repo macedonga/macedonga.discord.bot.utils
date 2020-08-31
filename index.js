@@ -6,17 +6,24 @@ require('dotenv').config()
 const { createError, createWarning, createSuccess, checkYT, getYTID } = require('./utils/functions');
 const neuralnetwork = require('./utils/neural.network');
 var request = require('request');
+var socket = require('socket.io-client')('https://api.macedon.ga');
 
 const client = new Discord.Client();
 var servers = {};
+var settings = {};
 
 client.on('ready', () => {
     client.user.setPresence({ activity: { name: 'mb.help' }, status: 'online' });
     client.guilds.cache.forEach(guild => {
         request.post('https://api.macedon.ga/mdbu/server/check', { json: { sid: guild.id } }, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
+            if (!error && response.statusCode == 200)
                 if (!body.connected)
                     request.post('https://api.macedon.ga/mdbu/server/add', { json: { sid: guild.id, key: process.env.KEY } });
+        });
+        request.post('https://api.macedon.ga/mdbu/settings/get', { json: { sid: guild.id } }, function(error, response, body) {
+            if (body[0].sid) {
+                settings[guild.id] = [];
+                settings[guild.id].push(body[0]);
             }
         });
     });
@@ -355,12 +362,13 @@ client.on('message', message => {
             mes.react("👎");
             message.delete();
         });
-    } else if (neuralnetwork.isQuestion(message.content)) {
-        const lmgtfy = new URL("https://lmgtfy.com/");
-        lmgtfy.searchParams.append("q", message.content);
-        lmgtfy.searchParams.append("s", "d");
-        message.channel.send(lmgtfy.href);
-    }
+    } else if (settings[message.guild.id][0].lmgtfy === true || settings[message.guild.id][0].lmgtfy === undefined)
+        if (neuralnetwork.isQuestion(message.content)) {
+            const lmgtfy = new URL("https://lmgtfy.com/");
+            lmgtfy.searchParams.append("q", message.content);
+            lmgtfy.searchParams.append("s", "d");
+            message.channel.send(lmgtfy.href);
+        }
 });
 
 client.on('guildMemberRemove', member => {
@@ -459,9 +467,18 @@ client.on('guildCreate', guild => {
     });
 });
 
-function randomRange(min, max) { // returns an int >= min and <= max
+function randomRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+socket.on('settings update', function(data) {
+    request.post('https://api.macedon.ga/mdbu/settings/get', { json: { sid: guild.id } }, function(error, response, body) {
+        if (body[0].sid) {
+            settings[guild.id] = [];
+            settings[guild.id].push(body[0]);
+        }
+    });
+});
 
 neuralnetwork.init();
 client.login(process.env.TOKEN);
