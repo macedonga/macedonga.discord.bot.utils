@@ -362,7 +362,7 @@ client.on('message', message => {
             mes.react("👎");
             message.delete();
         });
-    } else if (settings[message.guild.id][0].lmgtfy === true || settings[message.guild.id][0].lmgtfy === undefined)
+    } else if (isTrue(settings[message.guild.id][0].lmgtfy))
         if (neuralnetwork.isQuestion(message.content)) {
             const lmgtfy = new URL("https://lmgtfy.com/");
             lmgtfy.searchParams.append("q", message.content);
@@ -471,11 +471,21 @@ function randomRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Please don't judge me
+function isTrue(data) {
+    if (data === "true")
+        return true;
+    else if (data === undefined)
+        return true;
+    else
+        return false;
+}
+
 socket.on('settings update', function(data) {
-    request.post('https://api.macedon.ga/mdbu/settings/get', { json: { sid: guild.id } }, function(error, response, body) {
+    request.post('https://api.macedon.ga/mdbu/settings/get', { json: { sid: data } }, function(error, response, body) {
         if (body[0].sid) {
-            settings[guild.id] = [];
-            settings[guild.id].push(body[0]);
+            settings[data] = [];
+            settings[data].push(body[0]);
         }
     });
 });
