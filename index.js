@@ -11,6 +11,7 @@ var socket = require('socket.io-client')('https://api.macedon.ga');
 const client = new Discord.Client();
 var servers = {};
 var settings = {};
+var isReady = false;
 
 client.on('ready', () => {
     client.user.setPresence({ activity: { name: 'mb.help' }, status: 'online' });
@@ -31,13 +32,16 @@ client.on('ready', () => {
                 }
         });
     });
+    isReady = true;
     console.log("Ready!");
 });
 
 client.on('message', message => {
     if (message.author.bot) return;
     const args = message.content.slice(process.env.PREFIX.length).trim().split(/ +/);
-    const command = args.shift().toLowerCase();
+    var command = null;
+    if (isReady)
+        command = args.shift().toLowerCase();
     if (command === 'kick') {
         if (message.member.hasPermission("KICK_MEMBERS")) {
             if (!message.mentions.users.size) {
@@ -206,7 +210,8 @@ client.on('message', message => {
             .addField('**`mb.m.play <YT-LINK>`**', 'Plays the audio from the given YouTube video or adds the video to the queue.', true)
             .addField('**`mb.m.skip`**', 'Skips to the next video on the queue.', true)
             .addField('**`mb.m.stop`**', 'Disconnects the bot from the VC.', true)
-            .addField('**`mb.settings`**', 'Returns link to the bot dashboard. *(early beta)*\n*You need the server owner to configure the dashboard*', true)
+            .addField('**`mb.settings`**', 'Returns link to the bot dashboard. **(early beta)**\n*You need the server owner to configure the dashboard*', true)
+            .addField('**`mb.settings.get`**', 'Returns bot settings for this server.', true)
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
@@ -359,13 +364,39 @@ client.on('message', message => {
             mes.react("👎");
             message.delete();
         });
-    } else if (settings[message.guild.id][0].lmgtfy === "true")
+    } else if (command === 'settings') {
+        const embed = new Discord.MessageEmbed()
+            .setColor('#0000ff')
+            .setTitle('Bot settings')
+            .setDescription("**Remember! If you want to modify the bot's settings for this server you'll need to be the owner!**")
+            .addField('Link to the dashboard:', 'https://dash.macedon.ga/')
+            .setTimestamp()
+            .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
+        message.channel.send(embed);
+    } else if (command === 'settings.get') {
+        const embed = new Discord.MessageEmbed()
+            .setColor('#0000ff')
+            .setTitle('The settings for this server are:');
+        if (settings[message.guild.id][0].lmgtfy === "true")
+            embed.addField('Is LMGTFY activated?', "`YES`");
+        else
+            embed.addField('Is LMGTFY activated?', "`NO`");
+        if (settings[message.guild.id][0].wm != null)
+            embed.addField('Are goodbye/welcome messages activated?', "`YES`", true)
+            .addField('In which channel?', `\`${settings[message.guild.id][0].wm.name}\``, true)
+        else
+            embed.addField('Are goodbye/welcome messages activated?', "`NO`");
+        embed.setTimestamp()
+            .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
+        message.channel.send(embed);
+    } else if (settings[message.guild.id][0].lmgtfy === "true") {
         if (neuralnetwork.isQuestion(message.content)) {
             const lmgtfy = new URL("https://lmgtfy.com/");
             lmgtfy.searchParams.append("q", message.content);
             lmgtfy.searchParams.append("s", "d");
             message.channel.send(lmgtfy.href);
         }
+    }
 });
 
 client.on('guildMemberRemove', member => {
