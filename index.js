@@ -93,7 +93,7 @@ client.on('message', message => {
             message.channel.send(createWarning("You need to have the `BAN_MEMBERS` permission!"));
         }
     } else if (command === 'meme') {
-        https.get('https://api1-funtext.herokuapp.com/rndmemes', (resp) => {
+        https.get('https://api.macedon.ga/reddit/random/memes', (resp) => {
             let data = '';
             resp.on('data', (chunk) => {
                 data += chunk;
@@ -102,8 +102,8 @@ client.on('message', message => {
                 var res = JSON.parse(data);
                 const embed = new Discord.MessageEmbed()
                     .setTitle(res.title)
-                    .setURL(res.postLink)
-                    .setImage(res.url)
+                    .setURL(res.permalink)
+                    .setImage(res.image)
                     .setTimestamp()
                     .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
 
@@ -198,7 +198,7 @@ client.on('message', message => {
             .addField('**`mb.ban @user <DAYS> <REASON>`**', 'Bans a member.\n`<DAYS>`: Must be a value from 1 to 7. Default is 7.\n*You need the `BAN_MEMBERS` permission.*')
             .addField('**`mb.kick @user <REASON>`**', 'Kicks a member.\n*You need the `KICK_MEMBERS` permission.*')
             .addField('**`mb.purge 1-99`**', 'Purges messages in the channel.\n*You need the `MANAGE_MESSAGES` permission.*')
-            .addField('**`mb.meme`**', 'Returns a meme from `r/memes`, `r/dankmemes` or `r/meirl`')
+            .addField('**`mb.meme`**', 'Returns a meme from `r/memes`, `r/dankmemes`, `r/meme` or `r/meirl`')
             .addField('**`mb.insult @user`**', 'Insults the specified user.')
             .addField('**`mb.shorten https://link.com <SLUG>`**', 'Shortens the given URL.\n`<SLUG>`: the id of the shortened URL.')
             .addField('**`mb.whois https://link.com <dbg.true>`**', 'Returns WHOIS info about the domain.\n`<dbg.true>`: returns the json response from the API. Debugging purposes only!')
@@ -206,6 +206,7 @@ client.on('message', message => {
             .addField('**`mb.m.play <YT-LINK>`**', 'Plays the audio from the given YouTube video or adds the video to the queue.', true)
             .addField('**`mb.m.skip`**', 'Skips to the next video on the queue.', true)
             .addField('**`mb.m.stop`**', 'Disconnects the bot from the VC.', true)
+            .addField('**`mb.settings`**', 'Returns link to the bot dashboard. *(early beta)*\n*You need the server owner to configure the dashboard*', true)
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
@@ -266,14 +267,6 @@ client.on('message', message => {
             });
         } else {
             return message.channel.send(createError("No URL given!"));
-        }
-    } else if (command === 'say') {
-        if (message.author.id === "705080774113886238") {
-            var say = "";
-            args.forEach(word => {
-                say += word + " ";
-            });
-            message.channel.send(say);
         }
     } else if (command === 'm.play') {
         function play(connection, message) {
@@ -366,7 +359,7 @@ client.on('message', message => {
             mes.react("👎");
             message.delete();
         });
-    } else if (isTrue(settings[message.guild.id][0].lmgtfy))
+    } else if (settings[message.guild.id][0].lmgtfy === "true")
         if (neuralnetwork.isQuestion(message.content)) {
             const lmgtfy = new URL("https://lmgtfy.com/");
             lmgtfy.searchParams.append("q", message.content);
@@ -473,16 +466,6 @@ client.on('guildCreate', guild => {
 
 function randomRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Please don't judge me
-function isTrue(data) {
-    if (data === "true")
-        return true;
-    else if (data === undefined)
-        return true;
-    else
-        return false;
 }
 
 socket.on('settings update', function(data) {
