@@ -134,6 +134,63 @@ client.on('message', message => {
                 message.channel.send(createError("Error!\n" + err.message));
             });
         }
+    } else if (command === 'meme') {
+        https.get('https://api.macedon.ga/reddit/random/memes', (resp) => {
+            let data = '';
+            resp.on('data', (chunk) => {
+                data += chunk;
+            });
+            resp.on('end', () => {
+                var res = JSON.parse(data);
+                const embed = new Discord.MessageEmbed()
+                    .setTitle(res.title)
+                    .setURL(res.permalink)
+                    .setImage(res.image)
+                    .setTimestamp()
+                    .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
+
+                message.channel.send(embed);
+            });
+
+        }).on("error", (err) => {
+            message.channel.send(createError("Error!\n" + err.message));
+        });
+    } else if (command === 'kitty') {
+        https.get('https://api.thecatapi.com/v1/images/search', (resp) => {
+            let data = '';
+            resp.on('data', (chunk) => {
+                data += chunk;
+            });
+            resp.on('end', () => {
+                var res = JSON.parse(data);
+                const embed = new Discord.MessageEmbed()
+                    .setTitle("Here's a kitty!")
+                    .setImage(res[0].url)
+                    .setTimestamp()
+                    .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
+                message.channel.send(embed);
+            });
+        }).on("error", (err) => {
+            message.channel.send(createError("Error!\n" + err.message));
+        });
+    } else if (command === 'dog') {
+        https.get('https://api.thedogapi.com/v1/images/search', (resp) => {
+            let data = '';
+            resp.on('data', (chunk) => {
+                data += chunk;
+            });
+            resp.on('end', () => {
+                var res = JSON.parse(data);
+                const embed = new Discord.MessageEmbed()
+                    .setTitle("Here's a dog!")
+                    .setImage(res[0].url)
+                    .setTimestamp()
+                    .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
+                message.channel.send(embed);
+            });
+        }).on("error", (err) => {
+            message.channel.send(createError("Error!\n" + err.message));
+        });
     } else if (command === 'shorten') {
         var url = args[0];
         var slug = args[1];
@@ -212,6 +269,8 @@ client.on('message', message => {
             .addField('**`mb.m.stop`**', 'Disconnects the bot from the VC.', true)
             .addField('**`mb.settings`**', 'Returns link to the bot dashboard. **(early beta)**\n*You need the server owner to configure the dashboard*', true)
             .addField('**`mb.settings.get`**', 'Returns bot settings for this server.', true)
+            .addField('**`mb.kitty`**', 'Returns a cat image.', true)
+            .addField('**`mb.dog`**', 'Returns a dog image.', true)
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
