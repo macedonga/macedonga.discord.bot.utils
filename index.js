@@ -269,8 +269,8 @@ client.on('message', message => {
             .addField('**`mb.m.stop`**', 'Disconnects the bot from the VC.', true)
             .addField('**`mb.settings`**', 'Returns link to the bot dashboard. **(early beta)**\n*You need the server owner to configure the dashboard*', true)
             .addField('**`mb.settings.get`**', 'Returns bot settings for this server.', true)
-            .addField('**`mb.kitty`**', 'Returns a cat image.', true)
-            .addField('**`mb.dog`**', 'Returns a dog image.', true)
+            .addField('**`mb.kitty`**', 'Returns a cat image.')
+            .addField('**`mb.dog`**', 'Returns a dog image.')
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
