@@ -430,8 +430,8 @@ client.on('guildMemberRemove', member => {
 });
 
 client.on('guildMemberAdd', member => {
-    if (settings[member.guild.id].wm != null) {
-        const welcome = member.guild.channels.cache.get(settings[member.guild.id].wm.id);
+    if (settings[member.guild.id][0].wm != null) {
+        const welcome = member.guild.channels.cache.get(settings[member.guild.id][0].wm.id);
 
         var ran = randomRange(0, 4);
         var greeting;
