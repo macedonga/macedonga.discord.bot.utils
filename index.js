@@ -397,8 +397,8 @@ client.on('guildMemberRemove', member => {
 
         const channel = member.guild.channels.cache.get('738665053544251412');
         return channel.send(createSuccess("Deleted `" + member.user.username + "` messages successfully!", ""));
-    } else if (member.guild.id === "748921083461107794") {
-        const welcome = member.guild.channels.cache.get("748980052837924895");
+    } else if (settings[member.guild.id][0].wm != null) {
+        const welcome = member.guild.channels.cache.get(settings[member.guild.id][0].wm.id);
 
         var ran = randomRange(0, 4);
         var message;
