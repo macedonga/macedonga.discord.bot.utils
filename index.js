@@ -1,4 +1,6 @@
 const Discord = require('discord.js');
+const { Client, Attachment } = require('discord.js');
+
 const https = require('https');
 const ytdl = require('ytdl-core');
 const getYoutubeTitle = require('get-youtube-title')
@@ -7,6 +9,8 @@ const { createError, createWarning, createSuccess, checkYT, getYTID } = require(
 const neuralnetwork = require('./utils/neural.network');
 var request = require('request');
 var socket = require('socket.io-client')('https://api.macedon.ga');
+const textToImage = require('text-to-image');
+const { isNullOrUndefined } = require('util');
 
 const client = new Discord.Client();
 var servers = {};
@@ -269,13 +273,14 @@ client.on('message', message => {
             .addField('**`mb.shorten https://link.com <SLUG>`**', 'Shortens the given URL.\n`<SLUG>`: the id of the shortened URL.')
             .addField('**`mb.whois https://link.com <dbg.true>`**', 'Returns WHOIS info about the domain.\n`<dbg.true>`: returns the json response from the API. Debugging purposes only!')
             .addField('**`mb.poll <everyone> <here> POLL`**', 'Creates a poll and pings **here** or **everyone** if specified.\n*You need the `MENTION_EVERYONE` permission to be able to ping **here** or **everyone**.*')
-            .addField('**`mb.m.play <YT-LINK>`**', 'Plays the audio from the given YouTube video or adds the video to the queue.', true)
+            .addField('**`mb.m.play https://youtube.com/YT-V-ID`**', 'Plays the audio from the given YouTube video or adds the video to the queue.', true)
             .addField('**`mb.m.skip`**', 'Skips to the next video on the queue.', true)
             .addField('**`mb.m.stop`**', 'Disconnects the bot from the VC.', true)
             .addField('**`mb.settings`**', 'Returns link to the bot dashboard. **(early beta)**\n*You need the server owner to configure the dashboard*', true)
             .addField('**`mb.settings.get`**', 'Returns bot settings for this server.', true)
             .addField('**`mb.kitty`**', 'Returns a cat image.')
             .addField('**`mb.dog`**', 'Returns a dog image.')
+            .addField('**`mb.quote https://discordapp.com/000/000/000 <DATE>`**', 'Creates an image with the specified message.\n`<DATE>`: adds message year after the username.')
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
@@ -460,6 +465,35 @@ client.on('message', message => {
         embed.setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
+    } else if (command === "quote") {
+        if (!args[0])
+            return message.channel.send(createError("No message link given."))
+        else if (!args[0].includes("https://discordapp.com/"))
+            return message.channel.send(createError("No valid message link given."))
+        var messageLink = args[0].split("/")
+        if (!messageLink[5])
+            return message.channel.send(createError("No valid message link given."))
+        message.channel.messages.fetch(messageLink[6])
+            .then(message => {
+                if (args[1] === "date")
+                    var data = message.content + "\n- " + message.member.user.username + ", " + message.createdAt.getFullYear();
+                else
+                    var data = message.content + "\n- " + message.member.user.username;
+                textToImage.generate(data, {
+                    fontSize: 20,
+                    lineHeight: 30,
+                    margin: 5,
+                    fontFamily: "Sans",
+                    bgColor: "#202020",
+                    textColor: "#ffffff",
+                    textAlign: "center"
+                }).then(function(dataUri) {
+                    let buff = new Buffer.from(dataUri.replace(/^data:image\/(png|gif|jpeg);base64,/, ''), 'base64');
+                    const attachment = new Discord.MessageAttachment(buff, "quote.png");
+                    message.channel.send("Here's your quote", attachment);
+                });
+            })
+            .catch(console.error);
     } else if (settings[message.guild.id][0].lmgtfy === "true") {
         if (neuralnetwork.isQuestion(message.content)) {
             const lmgtfy = new URL("https://lmgtfy.com/");
