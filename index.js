@@ -564,31 +564,36 @@ socket.on('settings update', function(data) {
 });
 
 socket.on('get channels', function(data) {
-    var guild = client.guilds.cache.get(data);
-    var ch = {};
     try {
+        var guild = client.guilds.cache.get(data);
+        var ch = {};
         guild.channels.cache.forEach(channel => {
             if (channel.type === "text")
                 ch[channel.id] = {
                     name: channel.name
                 };
         });
-    } catch {}
-    socket.emit('return channels', ch);
+        socket.emit('return channels', ch);
+    } catch {
+        socket.emit('error');
+    }
 });
 
 socket.on('get categories', function(data) {
-    var guild = client.guilds.cache.get(data);
-    var ch = {};
     try {
+        var guild = client.guilds.cache.get(data);
+        var ch = {};
+
         guild.channels.cache.forEach(channel => {
             if (channel.type === "category")
                 ch[channel.id] = {
                     name: channel.name
                 };
         });
-    } catch {}
-    socket.emit('return categories', ch);
+        socket.emit('return categories', ch);
+    } catch {
+        socket.emit('error');
+    }
 });
 
 neuralnetwork.init();
