@@ -14,7 +14,7 @@ var settings = {};
 var isReady = false;
 
 client.on('ready', () => {
-    client.user.setPresence({ activity: { name: 'mb.help' }, status: 'online' });
+    client.user.setActivity(`over ${client.users.size} users`, { type: "watching" });
     client.guilds.cache.forEach(guild => {
         var jData = { sid: guild.id, uid: guild.owner.user.id, key: process.env.KEY }
 
@@ -459,6 +459,7 @@ client.on('message', message => {
 });
 
 client.on('guildMemberRemove', member => {
+    client.user.setActivity(`over ${client.users.size} users`, { type: "watching" });
     if (settings[member.guild.id][0].listing != null) {
         const categoryChannels = member.guild.channels.cache.filter(channel => channel.type === "category");
         categoryChannels.forEach(channel => {
@@ -509,6 +510,7 @@ client.on('guildMemberRemove', member => {
 });
 
 client.on('guildMemberAdd', member => {
+    client.user.setActivity(`over ${client.users.size} users`, { type: "watching" });
     if (settings[member.guild.id][0].wm != null) {
         const welcome = member.guild.channels.cache.get(settings[member.guild.id][0].wm.id);
 
