@@ -462,7 +462,7 @@ client.on('guildMemberRemove', member => {
     if (settings[member.guild.id][0].listing != null) {
         const categoryChannels = member.guild.channels.cache.filter(channel => channel.type === "category");
         categoryChannels.forEach(channel => {
-            if (channel.id === settings[member.guild.id][0].listing.cid) {
+            if (channel.id === settings[member.guild.id][0].listing.id) {
                 const advertisingChannels = channel.children;
                 advertisingChannels.forEach(ch => {
                     ch.messages.fetch().then(messages => {
