@@ -445,6 +445,11 @@ client.on('message', message => {
             .addField('In which channel?', `\`${settings[message.guild.id][0].wm.name}\``, true)
         else
             embed.addField('Are goodbye/welcome messages activated?', "`NO`");
+        if (settings[message.guild.id][0].listing != null)
+            embed.addField('Is "Listing" enabled for this server?', "`YES`", true)
+            .addField('In which category?', `\`${settings[message.guild.id][0].listing.name}\``, true)
+        else
+            embed.addField('Is "Listing" enabled for this server?', "`NO`");
         embed.setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
