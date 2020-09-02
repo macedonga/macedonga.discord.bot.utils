@@ -34,8 +34,8 @@ client.on('ready', () => {
     isReady = true;
     client.user.setPresence({
         activity: {
-            name: `over ${client.users.cache.size} users`,
-            type: 3
+            name: "for mb.help",
+            type: 2
         }
     });
     console.log("Ready!");
@@ -446,12 +446,14 @@ client.on('message', message => {
         else
             embed.addField('Is LMGTFY activated?', "`NO`");
         if (settings[message.guild.id][0].wm != null)
-            embed.addField('Are goodbye/welcome messages activated?', "`YES`", true)
+            embed.addField('\u200B', '\u200B')
+            .addField('Are goodbye/welcome messages activated?', "`YES`", true)
             .addField('In which channel?', `\`${settings[message.guild.id][0].wm.name}\``, true)
         else
             embed.addField('Are goodbye/welcome messages activated?', "`NO`");
         if (settings[message.guild.id][0].listing != null)
-            embed.addField('Is "Listing" enabled for this server?', "`YES`", true)
+            embed.addField('\u200B', '\u200B')
+            .addField('Is "Listing" enabled for this server?', "`YES`", true)
             .addField('In which category?', `\`${settings[message.guild.id][0].listing.name}\``, true)
         else
             embed.addField('Is "Listing" enabled for this server?', "`NO`");
@@ -471,8 +473,8 @@ client.on('message', message => {
 client.on('guildMemberRemove', member => {
     client.user.setPresence({
         activity: {
-            name: `over ${client.users.cache.size} users`,
-            type: 3
+            name: "for mb.help",
+            type: 2
         }
     });
     if (settings[member.guild.id][0].listing != null) {
@@ -527,8 +529,8 @@ client.on('guildMemberRemove', member => {
 client.on('guildMemberAdd', member => {
     client.user.setPresence({
         activity: {
-            name: `over ${client.users.cache.size} users`,
-            type: 3
+            name: "for mb.help",
+            type: 2
         }
     });
     if (settings[member.guild.id][0].wm != null) {
