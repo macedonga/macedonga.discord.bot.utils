@@ -459,11 +459,10 @@ client.on('message', message => {
 });
 
 client.on('guildMemberRemove', member => {
-    // Checks for the server "Thunder Advertising Official". https://discord.gg/KUX5VXp
-    if (member.guild.id === "736591510413508619") {
+    if (settings[member.guild.id][0].listing != null) {
         const categoryChannels = member.guild.channels.cache.filter(channel => channel.type === "category");
         categoryChannels.forEach(channel => {
-            if (channel.id === "737979266788229200") {
+            if (channel.id === settings[member.guild.id][0].listing.cid) {
                 const advertisingChannels = channel.children;
                 advertisingChannels.forEach(ch => {
                     ch.messages.fetch().then(messages => {
@@ -477,9 +476,6 @@ client.on('guildMemberRemove', member => {
                 });
             }
         });
-
-        const channel = member.guild.channels.cache.get('738665053544251412');
-        return channel.send(createSuccess("Deleted `" + member.user.username + "` messages successfully!", ""));
     } else if (settings[member.guild.id][0].wm != null) {
         const welcome = member.guild.channels.cache.get(settings[member.guild.id][0].wm.id);
 
@@ -577,6 +573,18 @@ socket.on('get channels', function(data) {
             };
     });
     socket.emit('return channels', ch);
+});
+
+socket.on('get categories', function(data) {
+    var guild = client.guilds.cache.get(data);
+    var ch = {};
+    guild.channels.cache.forEach(channel => {
+        if (channel.type === "category")
+            ch[channel.id] = {
+                name: channel.name
+            };
+    });
+    socket.emit('return categories', ch);
 });
 
 neuralnetwork.init();
