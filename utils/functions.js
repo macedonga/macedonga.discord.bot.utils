@@ -40,4 +40,8 @@ function getYTID(link) {
     return link.split('v=')[1];
 }
 
-module.exports = { createError, createWarning, createSuccess, checkYT, getYTID };
+function randomRange(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+module.exports = { createError, createWarning, createSuccess, checkYT, getYTID, randomRange };
