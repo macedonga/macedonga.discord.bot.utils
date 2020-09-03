@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 require('dotenv').config()
 const { settings } = require('./data/variables');
-const { createError, createWarning } = require('./utils/functions');
+const { createError, createWarning, randomRange } = require('./utils/functions');
 const neuralnetwork = require('./utils/neural.network');
 
 var request = require('request');
@@ -38,7 +38,7 @@ client.on('ready', () => {
         });
     });
     isReady = true;
-    client.user.setPresence({ activity: { name: "for mb.help", type: 2 } });
+    client.user.setPresence({ activity: { name: "for " + process.env.PREFIX + "help", type: 2 } });
     console.log("Ready!");
 });
 
@@ -136,7 +136,9 @@ client.on('guildMemberRemove', member => {
             .setDescription(message)
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
-        return welcome.send(embed);
+        try {
+            return welcome.send(embed);
+        } catch {}
     }
 });
 
@@ -169,7 +171,9 @@ client.on('guildMemberAdd', member => {
             .setDescription(greeting)
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
-        return welcome.send(embed);
+        try {
+            return welcome.send(embed);
+        } catch {}
     }
 });
 
