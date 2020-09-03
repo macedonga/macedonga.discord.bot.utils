@@ -24,6 +24,7 @@ module.exports = {
             .addField('**`mb.kitty`**', 'Returns a cat image.')
             .addField('**`mb.dog`**', 'Returns a dog image.')
             .addField('**`mb.quote https://discordapp.com/000/000/000 <DATE>`**', 'Creates an image with the specified message.\n`<DATE>`: adds message year after the username.')
+            .addField('**`mb.review NUM_FROM_1_TO_5 REVIEW`**', 'Creates a review of the server. (if enabled)')
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);

@@ -5,6 +5,7 @@ const { createError, createWarning, createSuccess } = require('../utils/function
 module.exports = {
     name: 'review',
     description: 'Reviews server.',
+    cooldown: 60,
     guildOnly: true,
     execute(message, args) {
         if (settings[message.guild.id][0].review != null) {
