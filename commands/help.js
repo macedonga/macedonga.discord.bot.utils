@@ -26,6 +26,7 @@ module.exports = {
             .addField('**`mb.quote https://discordapp.com/000/000/000 <DATE>`**', 'Creates an image with the specified message.\n`<DATE>`: adds message year after the username.')
             .addField('**`mb.review NUM_FROM_1_TO_5 REVIEW`**', 'Creates a review of the server. (if enabled)')
             .addField('**`mb.generate.qr <!dark HEX_COLOR> <!light HEX_COLOR> DATA`**', 'Creates a QR code with the given data.\n`<!dark HEX_COLOR>`: sets dark color to the given hex color (if valid)\n`<!light HEX_COLOR>`: sets light color to the given hex color (if valid)')
+            .addField('**`mb.decode.qr`**', 'Decodes the QR code image in the attachments.')
             .setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
