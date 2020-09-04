@@ -19,6 +19,9 @@ module.exports = {
             for (var i = 0; i < stars; i++)
                 starRating += "⭐";
 
+            if (stars === 0)
+                starRating += "0 stars";
+
             const embed = new Discord.MessageEmbed()
                 .setColor('#0000ff')
                 .setAuthor(message.member.user.username, message.member.user.avatarURL())
