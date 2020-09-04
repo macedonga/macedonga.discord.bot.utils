@@ -39,6 +39,15 @@ module.exports = {
             embed.addField('\u200B', '\u200B')
                 .addField('Are reviews enabled for this server?', "`NO`");
         }
+        if (settings[message.guild.id][0].review != null)
+            embed.addField('\u200B', '\u200B')
+            .addField('Is RSS enabled?', "`YES`", true)
+            .addField('In which channel?', `\`${settings[message.guild.id][0].rss.name}\``, true)
+            .addField('Link:', `\`${settings[message.guild.id][0].rss.link}\``, true)
+        else {
+            embed.addField('\u200B', '\u200B')
+                .addField('Is RSS enabled?', "`NO`");
+        }
         embed.setTimestamp()
             .setFooter('Made by macedonga#5526', 'https://cdn.macedon.ga/p.n.g.r.png');
         message.channel.send(embed);
