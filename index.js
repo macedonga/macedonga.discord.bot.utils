@@ -4,6 +4,7 @@ require('dotenv').config()
 const { settings } = require('./data/variables');
 const { createError, createWarning, randomRange } = require('./utils/functions');
 const neuralnetwork = require('./utils/neural.network');
+const rss = require('./functions/rss');
 
 var request = require('request');
 var socket = require('socket.io-client')('https://api.macedon.ga');
@@ -40,6 +41,7 @@ client.on('ready', () => {
     isReady = true;
     client.user.setPresence({ activity: { name: "for " + process.env.PREFIX + "help", type: 2 } });
     console.log("Ready!");
+    rss.GetRSS(client.guilds.cache);
 });
 
 client.on('message', message => {
@@ -191,6 +193,10 @@ socket.on('settings update', function(data) {
         if (body[0].sid) {
             settings[data] = [];
             settings[data].push(body[0]);
+            client.guilds.cache.forEach(guild => {
+                if (guild.id === data)
+                    rss.AddRSS(guild);
+            });
         }
     });
 });

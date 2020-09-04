@@ -18,8 +18,10 @@
         "natural": "^2.1.5",
         "opusscript": "0.0.7",
         "request": "^2.88.2",
+        "rss-parser": "^3.9.0",
         "socket.io-client": "^2.3.0",
         "text-to-image": "^2.3.0",
+        "turndown": "^6.0.0",
         "ytdl-core": "^3.2.2"
     },
     "devDependencies": {
