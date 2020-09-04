@@ -11,7 +11,7 @@ function UpdateRSS(guild) {
     try {
         if (settings[guild.id][0].rss != null) {
             parser.parseURL(settings[guild.id][0].rss.link, function(err, feed) {
-                const rssch = guild.channels.cache.get("751036271924740146");
+                const rssch = guild.channels.cache.get(settings[guild.id][0].rss.id);
                 if (rss[guild.id].feed != feed) {
                     var size = 10;
                     var newFeed = feed.items.slice(0, size);
