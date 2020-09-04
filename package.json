@@ -17,6 +17,7 @@
         "get-youtube-title": "^1.0.1",
         "natural": "^2.1.5",
         "opusscript": "0.0.7",
+        "qrcode": "^1.4.4",
         "request": "^2.88.2",
         "socket.io-client": "^2.3.0",
         "text-to-image": "^2.3.0",

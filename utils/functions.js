@@ -44,4 +44,10 @@ function randomRange(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports = { createError, createWarning, createSuccess, checkYT, getYTID, randomRange };
+function isHexColor(hex) {
+    return typeof hex === 'string' &&
+        hex.length === 6 &&
+        !isNaN(Number('0x' + hex))
+}
+
+module.exports = { createError, createWarning, createSuccess, checkYT, getYTID, randomRange, isHexColor };
