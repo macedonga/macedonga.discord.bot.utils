@@ -7,7 +7,7 @@ module.exports = {
     cooldown: 10,
     description: 'Generates a QR code.',
     execute(message, args) {
-        var options = { color: { dark: "#000000ff", light: "#ffffffff" } }
+        var options = { color: { dark: "#000000ff", light: "#ffffffff" }, width: 500 }
         var split = 0;
 
         if (args[0] === "!dark") {
@@ -36,7 +36,7 @@ module.exports = {
 
         var text = args.splice(split).join(" ");
         if (!text)
-            return message.channel.send(createError("You need to give me data to put in a QR code!."));
+            return message.channel.send(createError("You need to give me data to put in a QR code!"));
 
         QRCode.toDataURL(text, options, function(err, url) {
             let buff = new Buffer.from(url.replace(/^data:image\/(png|gif|jpeg);base64,/, ''), 'base64');
