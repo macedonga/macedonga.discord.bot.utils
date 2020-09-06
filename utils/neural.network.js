@@ -24,7 +24,6 @@ function encode(phrase) {
 }
 
 const encodedTrainingSet = TrainingSet.map(dataSet => {
-    console.log("Creating encoded training set");
     const encodedValue = encode(dataSet.phrase);
     return { input: encodedValue, output: dataSet.result };
 })
@@ -32,6 +31,7 @@ const encodedTrainingSet = TrainingSet.map(dataSet => {
 function init() {
     console.log("Starting initiation of Neural Network");
     network = new BrainJs.NeuralNetwork();
+    console.log("Creating encoded training set");
     console.log("Starting training");
     network.train(encodedTrainingSet);
 }
@@ -39,7 +39,7 @@ function init() {
 function isQuestion(data) {
     const encoded = encode(data);
     num = network.run(encoded);
-    if (num.question > 0.7)
+    if (num.question > 0.85)
         return true;
     return false;
 }

@@ -61,7 +61,7 @@ module.exports = {
                 collector.on('end', collected => {
                     try {
                         msg.delete();
-                        message.delete();
+                        message.react('👌');
                     } catch {}
                 });
             }));
