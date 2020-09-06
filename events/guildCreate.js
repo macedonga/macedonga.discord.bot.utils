@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+var request = require('request');
 
 module.exports = (client, member) => {
     request.post('https://api.macedon.ga/mdbu/server/check', { json: { sid: guild.id } }, function(error, response, body) {
