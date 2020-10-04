@@ -2,3 +2,6 @@
 
 # macedonga's tools
 A Discord bot with a dashboard.
+
+# DON'T USE THIS!
+Instead use [Yadurga](https://github.com/yadurga)
